@@ -3,4 +3,10 @@
 
 
 
+
+//Fonctions
+
+void priority_elect();
+
+
 #endif
