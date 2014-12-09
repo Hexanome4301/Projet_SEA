@@ -2,6 +2,16 @@
 #include "hw.h"
 #include "sched.h"
 
+
+void init_ctx(struct ctx_s* ctx, func_t f, unsigned int stack_size)
+{
+    char* startStack ;
+    ctx->varPC = (unsigned int) f ;
+    startStack = (char*) phyAlloc_alloc(stack_size);	// On définit le nombre d'octet à allouer
+    ctx->varSP = (int) (startStack+stack_size-4);	   // On se déplace de stack_size pour ne pas taper dans les éléments
+                                                        // plus bas de la pile et on enleve 4 octets car qd on ajoute stack_size on dépasse de 1 case mémoire
+}
+
 void __attribute__ ((naked)) switch_to(struct ctx_s* ctx) {
 
     // Sauvegarde du contexte courant
@@ -23,97 +33,7 @@ void __attribute__ ((naked)) switch_to(struct ctx_s* ctx) {
 	__asm("bx lr") ; // on branche a l'adresse contenu dans lr
 }
 
-void init_ctx(struct ctx_s* ctx, func_t f, unsigned int stack_size)
-{
-	char* startStack ;
-    ctx->varPC = (unsigned int) f ;
-	startStack = (char*) phyAlloc_alloc(stack_size);	// On définit le nombre d'octet à allouer
-    ctx->varSP = (int) (startStack+stack_size-4);	// On se déplace de stack_size pour ne pas taper dans les éléments
-											// plus bas de la pile et on enleve 4 octets car qd on ajoute stack_size on dépasse de 1 case mémoire
-}
 
-
-void start_current_process() {
-
-    current_process->f(current_process->argsPointer);
-
-    //retour de l'appel de f = fin du processus
-
-    current_process->state = terminated;
-
-    //sortie du round robin
-
-    struct pcb_s * process;
-    struct pcb_s * previous;
-    process = current_process->next;
-
-    // On cherche un process qui soit prêt
-
-    while((process)->state != ready)  {
-
-        process = process->next;
-
-    }
-
-    if(head == current_process) {
-
-        //nouveau head = head.next
-
-        tail->next = head->next;
-        head = current_process->next;
-
-        }
-    else {
-
-        if(tail == current_process) {
-
-            previous = current_process;
-
-            //on parcourt la liste pour trouver tail.previous
-
-            while(previous->next != tail){
-
-                previous = previous->next;
-
-            }
-
-            //nouveau tail.next = head
-
-            previous->next = head;
-
-            //nouveau tail = tail.previous
-
-            tail = previous;
-
-        }
-        else {
-        }
-
-        previous = current_process;
-
-        //on parcourt la liste pour trouver tail.previous
-
-        while(previous->next != current_process){
-
-            previous = previous->next;
-
-        }
-
-        previous->next = current_process->next;
-
-        set_tick_and_enable_timer();
-        ENABLE_IRQ();
-
-    }
-
-    //desallocation
-    phyAlloc_free(current_process->startStack, STACK_SIZE);
-    phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
-
-    //changement de processus courant
-
-    current_process = process;
-}
 
 void init_pcb(struct pcb_s* pcb, func_t f, void* args ,unsigned int stack_size){
 
@@ -149,32 +69,6 @@ void init_pcb(struct pcb_s* pcb, func_t f, void* args ,unsigned int stack_size){
     tail = pcb;
 }
 
-void create_process(func_t f, void* args ,unsigned int stack_size)
-{
-   struct pcb_s* unPCB = phyAlloc_alloc(sizeof(struct pcb_s));
-   init_pcb(unPCB, f, &args ,stack_size );
-
-}
-
-
-void elect(){
-
-    struct pcb_s * process;
-    process = current_process;
-
-    // On cherche un process qui soit prêt
-
-    while (process->next->state == terminated) {
-         /* gestion de la terminaison de process->next*/
-    }
-
-    while((process->next)->state != ready){
-        process = process->next;
-    }
-    current_process = process->next;
-
-}
-
 void start_sched() {
 
     head->state=ready;
@@ -194,6 +88,17 @@ void start_sched() {
         ;
     }
 
+
+}
+
+void create_process(func_t f, void* args ,unsigned int stack_size)
+{
+   struct pcb_s* unPCB = phyAlloc_alloc(sizeof(struct pcb_s));
+   init_pcb(unPCB, f, &args ,stack_size );
+
+   // **************************************************************************
+   // Appel à la méthode d'ajout instancié en fonction du bloc scheduler choisi
+   // **************************************************************************
 
 }
 

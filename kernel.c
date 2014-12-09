@@ -22,6 +22,7 @@ int compute_volume( int rad)
 
 #include "hw.h"
 #include "sched.h"
+#include "FCFS_scheduler.h"
 
 struct ctx_s ctx_ping;
 struct ctx_s ctx_pong;
