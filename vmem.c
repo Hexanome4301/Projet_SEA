@@ -1,9 +1,10 @@
 #define PAGE_SIZE 4096
-#define SECON_LVL_TT_COUN 256
-#define SECON_LVL_TT_SIZE  SECON_LVL_TT_COUN*PAGE_SIZE 
 #define FIRST_LVL_TT_COUN 4096
+#define FIRST_LVL_TT_SIZE FIRST_LVL_TT_COUN*4  //Car la taille d'une entrée est 32bits donc 4 octects
+#define SECON_LVL_TT_COUN 256
+#define SECON_LVL_TT_SIZE  SECON_LVL_TT_COUN*4 //Car la taille d'une entrée est 32bits donc 4 octects 
 #define TOTAL_TT_SIZE FIRST_LVL_TT_SIZE + SECON_LVL_TT_SIZE*SECON_LVL_TT_COUN
-#define FIRST_LVL_TT_SIZE FIRST_LVL_TT_COUN*4
+
 init_kern_translation_table(void){
 int retAdress;
 
