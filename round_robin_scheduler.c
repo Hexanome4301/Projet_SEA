@@ -1,7 +1,9 @@
 #include "round_robin_scheduler.h"
+#include "sched.h"
+#include "hw.h"
+#include "phyAlloc.h"
 
-
-void elect(){
+void elect_round_robin(){
 
     struct pcb_s * process;
     process = current_process;
@@ -9,7 +11,7 @@ void elect(){
     // On cherche un process qui soit prêt
 
     while (process->next->state == terminated) {
-         remove_process();
+         remove_process_round_robin();
     }
 
     while((process->next)->state != ready){
@@ -19,7 +21,8 @@ void elect(){
 
 }
 
-void remove_process(){
+void remove_process_round_robin() {
+
     struct pcb_s * process;
     struct pcb_s * previous;
     process = current_process->next;
@@ -92,21 +95,9 @@ void remove_process(){
     current_process = process;
 }
 
-void start_current_process() {
-
-    current_process->f(current_process->argsPointer);
-
-    //retour de l'appel de f = fin du processus
-
-    current_process->state = terminated;
-
-    //sortie du round robin
-    remove_process();
 
 
-}
-
-void init_pcb(struct pcb_s* pcb, func_t f, void* args ,unsigned int stack_size){
+void init_pcb_round_robin(struct pcb_s* pcb, func_t f, void* args ,unsigned int stack_size){
 
     //initialisation de la pcb lors de la création d'un processus
 
