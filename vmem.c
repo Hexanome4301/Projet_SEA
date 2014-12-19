@@ -10,30 +10,47 @@ uint32_t retAdress;
 uint32_t mask = 0x3ffffc00;		
     // 4 242 304
     //level-1 pages 64384 
-    uint32_t ft [] = FIRST_TABLE_START_POINTER;
+    uint32_t * ft  = (uint32_t *)FIRST_TABLE_START_POINTER;
+	uint32_t device_flags_first_level = 0;
+			(0 << 9) | // P
+			(0 << 5) | // Domain 
+			(0 << 4) | // SBZ 
+			(0 << 3) | // NS 
+			(0 << 2) | // SBZ 
+			(0 << 1) | // Always 0
+			(1 << 0); // Always 1
     
-    uint32_t device_flags = 0;
-            device_flags |= (1 << 0);   //XN
-            device_flags  |=(1 << 1) ;  //1
-            device_flags  |=(1 << 2) ;  //B 
-            device_flags  |=(1 << 3);   //C  
-            device_flags  |=(11 << 4);  //AP
-            device_flags  |=(001 << 6); //TEX
+    uint32_t device_flags_second_level = 0;
+            device_flags_second_level = (1 << 1)   // 1
+              |(11 << 4)  //AP
+              |(001 << 6); //TEX
+              
+    uint32_t device_flags_second_level_io = 0;
+            device_flags_second_level_io = (1 << 1)   // 1
+              |(1 << 3)  //B
+              |(11 << 4)  //AP
+              |(000 << 6); //TEX          
     
         for(int i=0; i<FIRST_LVL_TT_SIZE;i++){
             
             // put the right flags values
             if() //normal case
             {
+				ft[i] = ;   //flags are 0
 			}
 			else if () // I/O case
 			{
+				
+			    ft[i] = ;   //flags are 0
+
+				
 			}
             
             
             // level-2 pages
-            for(){
-                
+            for(int j=0; j<SECON_LVL_TT_SIZE;j++){
+                 uint32_t * st  = (uint32_t *)FIRST_TABLE_START_POINTER;
+
                      // put the right flags values
             if() //normal case
             {
@@ -59,6 +76,8 @@ uint32_t mask = 0x3ffffc00;
 
                 //translation default
                 else{
+					
+					
                     
                 }
             }
