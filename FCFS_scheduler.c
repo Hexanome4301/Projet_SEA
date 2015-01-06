@@ -76,6 +76,61 @@ void init_pcb_fcfs(struct pcb_s* pcb, func_t f, void* args ,unsigned int stack_s
 
 void remove_process_fcfs() {
 
+     //case 1 : remove from the top
+     if( current_process == head ) {
+	
+	//mise a jour de head 
+	head = head->next;
+	
+	//desallocation
+	phyAlloc_free(current_process->startStack, STACK_SIZE);
+	phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+
+	//changement de processus courant
+	elect_fcfs();	
+     }
+
+     //case 2 : remove from bottom
+     else if(current_process == tail) {
+	//mise a jour de tail
+	struct pcb_s * previous;
+	previous = head ;
+	
+	// parcours de la liste pour trouver le précédent de tail
+	while(previous->next != tail){
+	    previous = previous->next;
+	}	
+	tail = previous
+
+	//desallocation
+	phyAlloc_free(current_process->startStack, STACK_SIZE);
+	phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+
+	//changement de processus courant
+	elect_fcfs();	
+     }
+
+     //case 3 : remove from the center
+     else{
+	struct pcb_s * previous;
+	previous = head ;
+	
+	// parcours de la liste pour trouver le précédent de tail
+	while(previous->next != current_process){
+	    previous = previous->next;
+	}
+
+	previous->next = current_process->next;
+
+	//desallocation
+	phyAlloc_free(current_process->startStack, STACK_SIZE);
+	phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+
+	//changement de processus courant
+	elect_fcfs();	
+     }
+
+
 //    struct pcb_s * process;
 //    struct pcb_s * previous;
 //    process = current_process->next;
