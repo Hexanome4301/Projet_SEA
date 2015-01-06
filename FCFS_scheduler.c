@@ -3,11 +3,14 @@
 #include "phyAlloc.h"
 
 
+
 void elect_fcfs(){
 
     // STEP 0 : ON VERIFIE L'ETAT DU PROCESSUS COURANT QUI VA ETRE SWITCHE
     // S'IL EST A L'ETAT TERMINATED -> APPEL A REMOVE PCB
-    // TODO
+    if((*current_process).state == terminated){
+        remove_process_fcfs();
+    }
 
 
     //STEP 1 : recupération du premier process dans notre queue
@@ -76,74 +79,57 @@ void init_pcb_fcfs(struct pcb_s* pcb, func_t f, void* args ,unsigned int stack_s
 
 void remove_process_fcfs() {
 
-//    struct pcb_s * process;
-//    struct pcb_s * previous;
-//    process = current_process->next;
+     //case 1 : remove from the top
+     if( current_process == head ) {
+	
+        //mise a jour de head
+        head = head->next;
 
-//    // On cherche un process qui soit prêt
+        //desallocation
+        phyAlloc_free(current_process->startStack, STACK_SIZE);
+        phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
 
-//    while((process)->state != ready)  {
+        //changement de processus courant
+        //retour a elect
+     }
 
-//        process = process->next;
+     //case 2 : remove from bottom
+     else if(current_process == tail) {
+        //mise a jour de tail
+        struct pcb_s * previous;
+        previous = head ;
 
-//    }
+        // parcours de la liste pour trouver le précédent de tail
+        while(previous->next != tail){
+            previous = previous->next;
+        }
+        tail = previous;
 
-//    if(head == current_process) {
+        //desallocation
+        phyAlloc_free(current_process->startStack, STACK_SIZE);
+        phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
 
-//        //nouveau head = head.next
+        //changement de processus courant
+        //retour a elect
+     }
 
-//        tail->next = head->next;
-//        head = current_process->next;
+     //case 3 : remove from the center
+     else{
+        struct pcb_s * previous;
+        previous = head ;
 
-//        }
-//    else {
+        // parcours de la liste pour trouver le précédent de tail
+        while(previous->next != current_process){
+            previous = previous->next;
+        }
 
-//        if(tail == current_process) {
+        previous->next = current_process->next;
 
-//            previous = current_process;
+        //desallocation
+        phyAlloc_free(current_process->startStack, STACK_SIZE);
+        phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
 
-//            //on parcourt la liste pour trouver tail.previous
-
-//            while(previous->next != tail){
-
-//                previous = previous->next;
-
-//            }
-
-//            //nouveau tail.next = head
-
-//            previous->next = head;
-
-//            //nouveau tail = tail.previous
-
-//            tail = previous;
-
-//        }
-//        else {
-//        }
-
-//        previous = current_process;
-
-//        //on parcourt la liste pour trouver tail.previous
-
-//        while(previous->next != current_process){
-
-//            previous = previous->next;
-
-//        }
-
-//        previous->next = current_process->next;
-
-//        set_tick_and_enable_timer();
-//        ENABLE_IRQ();
-
-//    }
-
-//    //desallocation
-//    phyAlloc_free(current_process->startStack, STACK_SIZE);
-//    phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
-
-//    //changement de processus courant
-
-//    current_process = process;
+        //changement de processus courant
+        //retour a elect
+     }
 }
