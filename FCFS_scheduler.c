@@ -3,12 +3,20 @@
 #include "phyAlloc.h"
 
 
-void elect_fcfs(){
+
+void choice_elect_fcfs(){
 
     // STEP 0 : ON VERIFIE L'ETAT DU PROCESSUS COURANT QUI VA ETRE SWITCHE
     // S'IL EST A L'ETAT TERMINATED -> APPEL A REMOVE PCB
-    // TODO
+    
+    if((*current_process).state == terminated ){
+	remove_process_fcfs();
+    }else{
+	elect_fcfs();    
+    }
+}
 
+void elect_fcfs(){
 
     //STEP 1 : recupération du premier process dans notre queue
     //*****
@@ -129,76 +137,4 @@ void remove_process_fcfs() {
 	//changement de processus courant
 	elect_fcfs();	
      }
-
-
-//    struct pcb_s * process;
-//    struct pcb_s * previous;
-//    process = current_process->next;
-
-//    // On cherche un process qui soit prêt
-
-//    while((process)->state != ready)  {
-
-//        process = process->next;
-
-//    }
-
-//    if(head == current_process) {
-
-//        //nouveau head = head.next
-
-//        tail->next = head->next;
-//        head = current_process->next;
-
-//        }
-//    else {
-
-//        if(tail == current_process) {
-
-//            previous = current_process;
-
-//            //on parcourt la liste pour trouver tail.previous
-
-//            while(previous->next != tail){
-
-//                previous = previous->next;
-
-//            }
-
-//            //nouveau tail.next = head
-
-//            previous->next = head;
-
-//            //nouveau tail = tail.previous
-
-//            tail = previous;
-
-//        }
-//        else {
-//        }
-
-//        previous = current_process;
-
-//        //on parcourt la liste pour trouver tail.previous
-
-//        while(previous->next != current_process){
-
-//            previous = previous->next;
-
-//        }
-
-//        previous->next = current_process->next;
-
-//        set_tick_and_enable_timer();
-//        ENABLE_IRQ();
-
-//    }
-
-//    //desallocation
-//    phyAlloc_free(current_process->startStack, STACK_SIZE);
-//    phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
-
-//    //changement de processus courant
-
-//    current_process = process;
 }
