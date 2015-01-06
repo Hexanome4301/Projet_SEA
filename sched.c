@@ -5,6 +5,7 @@
 #include "FCFS_scheduler.h"
 #define ROUND_ROBIN_SCHEDULER 1
 #define FCFS_SCHEDULER 2
+#define PRIORITY_SCHEDULER 3
 #define CURRENT_SCHEDULER FCFS_SCHEDULER
 
 
@@ -61,7 +62,7 @@ void start_sched() {
     }
 }
 
-void create_process(func_t f, void* args ,unsigned int stack_size) {
+void create_process(func_t f, void* args ,unsigned int stack_size, unsigned int prio =0) {
 
    struct pcb_s* unPCB = phyAlloc_alloc(sizeof(struct pcb_s));
 
@@ -69,12 +70,16 @@ void create_process(func_t f, void* args ,unsigned int stack_size) {
    // Appel à la méthode d'ajout instancié en fonction du bloc scheduler choisi
    // **************************************************************************
     switch(CURRENT_SCHEDULER) {
-        case 1 :
+        case ROUND_ROBIN_SCHEDULER :
             init_pcb_round_robin(unPCB, f, &args ,stack_size );
             break;
 
         case FCFS_SCHEDULER :
             init_pcb_fcfs(unPCB,f,&args , stack_size);
+            break;
+
+        case PRIORITY_SCHEDULER :
+            init_pcb_priority(unPCB,f,&args , stack_size, prio);
             break;
 
         default:

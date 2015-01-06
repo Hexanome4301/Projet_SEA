@@ -67,7 +67,15 @@ void funcA()
 {
     int cptA = 0;
     while ( 1 ) {
-        cptA ++;
+        if(cptA <= 6){
+            cptA++;
+            if(cptA == 4){
+                (*current_process).state = wait;
+                (*head).state = ready; //TODO methode qui fait passer un process de wait a ready
+            }
+        }else{
+            (*current_process).state = terminated;
+        }
     }
 }
 
@@ -75,7 +83,14 @@ void funcB()
 {
     int cptB = 1;
     while ( 1 )   {
-       cptB += 2 ;
+        if(cptB <= 9){
+            cptB += 2 ;
+            if(cptB == 3){
+                (*current_process).state = wait;
+            }
+        }else{
+            (*current_process).state = terminated;
+        }
     }
 
     cptB += 2;
@@ -85,10 +100,15 @@ void funcC()
 {
     int cptC = 1;
     while ( 1 ) {
-         cptC += 2 ;
+        if(cptC <= 5){
+            cptC += 2 ;
+        }else{
+            (*current_process).state = terminated;
+        }
      }
 
 }
+
 
 int kmain( void ) {
 
@@ -98,9 +118,11 @@ int kmain( void ) {
     //current_ctx = &ctx_init;
     //switch_to(&ctx_ping);
     pid = 0;
-    create_process(funcB, NULL, STACK_SIZE);
-    create_process(funcA, NULL, STACK_SIZE);
-    create_process(funcC, NULL, STACK_SIZE);
+    create_process(funcB, NULL, STACK_SIZE,0);
+    create_process(funcA, NULL, STACK_SIZE,1);
+    create_process(funcC, NULL, STACK_SIZE,2);
+    create_process(funcD, NULL, STACK_SIZE,1);
+    create_process(funcE, NULL, STACK_SIZE,2);
     start_sched();
 
     /*Pas atteignable vues nos 2 fonctions */

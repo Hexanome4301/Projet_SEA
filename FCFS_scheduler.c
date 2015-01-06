@@ -4,19 +4,14 @@
 
 
 
-void choice_elect_fcfs(){
+void elect_fcfs(){
 
     // STEP 0 : ON VERIFIE L'ETAT DU PROCESSUS COURANT QUI VA ETRE SWITCHE
     // S'IL EST A L'ETAT TERMINATED -> APPEL A REMOVE PCB
-    
-    if((*current_process).state == terminated ){
-	remove_process_fcfs();
-    }else{
-	elect_fcfs();    
+    if((*current_process).state == terminated){
+        remove_process_fcfs();
     }
-}
 
-void elect_fcfs(){
 
     //STEP 1 : recupération du premier process dans notre queue
     //*****
@@ -87,54 +82,54 @@ void remove_process_fcfs() {
      //case 1 : remove from the top
      if( current_process == head ) {
 	
-	//mise a jour de head 
-	head = head->next;
-	
-	//desallocation
-	phyAlloc_free(current_process->startStack, STACK_SIZE);
-	phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+        //mise a jour de head
+        head = head->next;
 
-	//changement de processus courant
-	elect_fcfs();	
+        //desallocation
+        phyAlloc_free(current_process->startStack, STACK_SIZE);
+        phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+
+        //changement de processus courant
+        //retour a elect
      }
 
      //case 2 : remove from bottom
      else if(current_process == tail) {
-	//mise a jour de tail
-	struct pcb_s * previous;
-	previous = head ;
-	
-	// parcours de la liste pour trouver le précédent de tail
-	while(previous->next != tail){
-	    previous = previous->next;
-	}	
-	tail = previous
+        //mise a jour de tail
+        struct pcb_s * previous;
+        previous = head ;
 
-	//desallocation
-	phyAlloc_free(current_process->startStack, STACK_SIZE);
-	phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+        // parcours de la liste pour trouver le précédent de tail
+        while(previous->next != tail){
+            previous = previous->next;
+        }
+        tail = previous;
 
-	//changement de processus courant
-	elect_fcfs();	
+        //desallocation
+        phyAlloc_free(current_process->startStack, STACK_SIZE);
+        phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+
+        //changement de processus courant
+        //retour a elect
      }
 
      //case 3 : remove from the center
      else{
-	struct pcb_s * previous;
-	previous = head ;
-	
-	// parcours de la liste pour trouver le précédent de tail
-	while(previous->next != current_process){
-	    previous = previous->next;
-	}
+        struct pcb_s * previous;
+        previous = head ;
 
-	previous->next = current_process->next;
+        // parcours de la liste pour trouver le précédent de tail
+        while(previous->next != current_process){
+            previous = previous->next;
+        }
 
-	//desallocation
-	phyAlloc_free(current_process->startStack, STACK_SIZE);
-	phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+        previous->next = current_process->next;
 
-	//changement de processus courant
-	elect_fcfs();	
+        //desallocation
+        phyAlloc_free(current_process->startStack, STACK_SIZE);
+        phyAlloc_free(current_process, sizeof(struct pcb_s)); //desallocation de pcb_init
+
+        //changement de processus courant
+        //retour a elect
      }
 }

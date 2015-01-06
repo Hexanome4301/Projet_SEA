@@ -24,6 +24,8 @@ struct pcb_s {
     unsigned int pid;
     ProcessState state;
 
+    unsigned int priority;
+
     unsigned int co;
     unsigned int* sp;
     char *startStack;
@@ -60,11 +62,11 @@ void __attribute__ ((naked)) switch_to(struct ctx_s* ctx);
 void __attribute__ ((naked)) ctx_switch();
 void __attribute__ ((naked)) ctx_switch_from_irq();
 
-void create_process(func_t f, void* args ,unsigned int stack_size);
+void create_process(func_t f, void* args ,unsigned int stack_size, unsigned int prio);
 
 // ***************************************************fin fonctions globales
 
-
+void start_current_process();
 
 // fonction instancié en fonction du scheduler choisi
 void elect();
